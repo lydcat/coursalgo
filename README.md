@@ -1,2 +1,2 @@
 # coursalgo
-gd1.1
+Ducat Lydie GD1.1
