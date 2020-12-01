@@ -1,0 +1,71 @@
+class Jeu(object):
+    def __init__(self):
+        self.Plateau = Plateau()
+        self.play = True
+         
+    def jouer(self):
+        self.Plateau.Grille()
+        self.Plateau.cacherGrille()
+
+    def gagner(self):
+        if self.Plateau.nbrMines <= 0:
+            for i in self.Plateau.mappCachee:
+                if not '*' in i:
+                    print("U win !")
+                    return False
+                    print ("Game Over")
+ 
+class Plateau(object):
+    def __init__(self):
+        self.mapp = []
+        self.mappCachee = []
+        self.nbrMines = 0
+        self.tailleBloc = 20
+        self.largBloc = 10  
+        self.largF = self.largBloc * self.tailleBloc
+ 
+         
+    def Grille(self):
+        for i in range(self.largBloc):
+          self.mapp.append([0] * self.largBloc)
+          self.mapp = self.placerBombe()
+          self.mapp = self.placerBombe()
+     
+    def placerBombe(self):
+        self.nbrMines += 1
+        self.col, self.ligne, self.bombe = random.randint(0, self.largBloc), random.randint(0, self.largBloc), 9
+        self.mapp[self.col][self.ligne] = self.bombe
+        self.mapp = self.chiffrerMap(self.col, self.ligne)
+        return self.mapp
+ 
+    def chiffrerMap(self, col, ligne):
+        for i in range(self.largBloc):     
+            for j in range(self.largBloc):     
+                newL = []
+            for ii in range(max(0, i-1), min(i+2, self.largBloc)):        
+              for jj in range(max(0, j-1), min(j+2, self.largBloc)):      
+                newL.append(self.mapp[ii][jj])
+              if self.mapp[i][j] != 9:
+                self.mapp[i][j] = newL.count(9)                 
+                newL = []
+                return self.mapp
+ 
+    def cacherGrille(self):
+        for i in range(self.largBloc):
+            self.mappCachee.append(['*'] * self.largBloc)
+
+    def devoiler(self, l, c):
+        var = self.mapp[l][c]   
+        if var == 9:
+            self.mappCachee[l][c] = str(var)
+            play = False
+            return
+        if self.mappCachee[l][c] == str(var):
+            return
+        else:
+            self.mappCachee[l][c] = str(var)
+            if var == 0:
+              for ii in range(max(0, l-1), min(l+2, self.largBloc)):        
+                for jj in range(max(0, c-1), min(c+2, self.largBloc)):
+                  if self.mapp[ii][jj] == 0:
+                    self.devoiler(ii, jj)
